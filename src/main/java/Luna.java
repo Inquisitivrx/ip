@@ -1,7 +1,10 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Luna {
     public static void main(String[] args) {
+        // List to store user inputs
+        ArrayList<String> tasks = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
 
         // Print a greeting message
@@ -15,15 +18,23 @@ public class Luna {
             String userInput = scanner.nextLine();
 
             if (userInput.equalsIgnoreCase("bye")) {
-                // Exit if the user types "bye"
+                // Exit if user types "bye"
                 System.out.println("____________________________________________________________");
                 System.out.println(" Bye. Hope to see you again soon!");
                 System.out.println("____________________________________________________________");
                 break;
-            } else {
-                // Echo the command entered by the user
+            } else if (userInput.equalsIgnoreCase("list")) {
+                // Display all stored tasks
                 System.out.println("____________________________________________________________");
-                System.out.println(" " + userInput);
+                for (int i = 0; i < tasks.size(); i++) {
+                    System.out.println(" " + (i + 1) + ". " + tasks.get(i));
+                }
+                System.out.println("____________________________________________________________");
+            } else {
+                // Add user input to the list and confirm
+                tasks.add(userInput);
+                System.out.println("____________________________________________________________");
+                System.out.println(" added: " + userInput);
                 System.out.println("____________________________________________________________");
             }
         }
