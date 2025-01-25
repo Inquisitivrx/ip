@@ -75,6 +75,14 @@ public class Luna {
                     System.out.println("   " + tasks.get(tasks.size() - 1));
                     System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
                     System.out.println("____________________________________________________________");
+                } else if (userInput.startsWith("delete ")) {
+                    int taskIndex = getTaskIndex(userInput, tasks.size());
+                    Task removedTask = tasks.remove(taskIndex);
+                    System.out.println("____________________________________________________________");
+                    System.out.println(" Noted. I've removed this task:");
+                    System.out.println("   " + removedTask);
+                    System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+                    System.out.println("____________________________________________________________");
                 } else {
                     throw new LunaException("I'm sorry, but I don't recognize that command.");
                 }
