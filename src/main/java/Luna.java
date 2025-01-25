@@ -31,46 +31,52 @@ public class Luna {
                     System.out.println(" " + (i + 1) + ". " + tasks.get(i));
                 }
                 System.out.println("____________________________________________________________");
-            } else if (userInput.startsWith("mark ")) {
-                // Mark a task as done
-                try {
-                    int taskNumber = Integer.parseInt(userInput.split(" ")[1]);
-                    Task task = tasks.get(taskNumber - 1);
-                    task.markAsDone();
+            } else if (userInput.startsWith("todo ")) {
+                // Add a ToDo task
+                String description = userInput.substring(5).trim();
+                Task task = new Todo(description);
+                tasks.add(task);
+                printTaskAdded(task, tasks.size());
+            } else if (userInput.startsWith("deadline ")) {
+                // Add a Deadline task
+                String[] parts = userInput.substring(9).split(" /by ");
+                if (parts.length == 2) {
+                    Task task = new Deadline(parts[0].trim(), parts[1].trim());
+                    tasks.add(task);
+                    printTaskAdded(task, tasks.size());
+                } else {
                     System.out.println("____________________________________________________________");
-                    System.out.println(" Nice! I've marked this task as done:");
-                    System.out.println("   " + task);
-                    System.out.println("____________________________________________________________");
-                } catch (Exception e) {
-                    System.out.println("____________________________________________________________");
-                    System.out.println(" Invalid task number. Please try again.");
+                    System.out.println(" Invalid format. Use: deadline [description] /by [time]");
                     System.out.println("____________________________________________________________");
                 }
-            } else if (userInput.startsWith("unmark ")) {
-                // Mark a task as not done
-                try {
-                    int taskNumber = Integer.parseInt(userInput.split(" ")[1]);
-                    Task task = tasks.get(taskNumber - 1);
-                    task.markAsNotDone();
+            } else if (userInput.startsWith("event ")) {
+                // Add an Event task
+                String[] parts = userInput.substring(6).split(" /from | /to ");
+                if (parts.length == 3) {
+                    Task task = new Event(parts[0].trim(), parts[1].trim(), parts[2].trim());
+                    tasks.add(task);
+                    printTaskAdded(task, tasks.size());
+                } else {
                     System.out.println("____________________________________________________________");
-                    System.out.println(" OK, I've marked this task as not done yet:");
-                    System.out.println("   " + task);
-                    System.out.println("____________________________________________________________");
-                } catch (Exception e) {
-                    System.out.println("____________________________________________________________");
-                    System.out.println(" Invalid task number. Please try again.");
+                    System.out.println(" Invalid format. Use: event [description] /from [start] /to [end]");
                     System.out.println("____________________________________________________________");
                 }
             } else {
-                // Add user input to the list as a new task
-                tasks.add(new Task(userInput));
                 System.out.println("____________________________________________________________");
-                System.out.println(" added: " + userInput);
+                System.out.println(" I'm sorry, I don't understand that command.");
                 System.out.println("____________________________________________________________");
             }
         }
 
         // Close the scanner
         scanner.close();
+    }
+
+    private static void printTaskAdded(Task task, int taskCount) {
+        System.out.println("____________________________________________________________");
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println("____________________________________________________________");
     }
 }
