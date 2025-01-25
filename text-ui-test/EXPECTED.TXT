@@ -4,32 +4,38 @@ ____________________________________________________________
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [T][ ] borrow book
+   [T][ ] read book
  Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] submit assignment (by: Sunday)
  Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Got it. I've added this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] team meeting (from: Monday 2pm to: 4pm)
  Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
  Here are the tasks in your list:
- 1. [T][ ] borrow book
- 2. [D][ ] return book (by: Sunday)
- 3. [E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 1. [T][ ] read book
+ 2. [D][ ] submit assignment (by: Sunday)
+ 3. [E][ ] team meeting (from: Monday 2pm to: 4pm)
 ____________________________________________________________
 ____________________________________________________________
  Nice! I've marked this task as done:
-   [T][X] borrow book
+   [D][X] submit assignment (by: Sunday)
 ____________________________________________________________
 ____________________________________________________________
  OK, I've marked this task as not done yet:
-   [T][ ] borrow book
+   [D][ ] submit assignment (by: Sunday)
+____________________________________________________________
+____________________________________________________________
+ OOPS!!! I'm sorry, but I don't recognize that command.
+____________________________________________________________
+____________________________________________________________
+ OOPS!!! I'm sorry, but I don't recognize that command.
 ____________________________________________________________
 ____________________________________________________________
  Bye. Hope to see you again soon!
