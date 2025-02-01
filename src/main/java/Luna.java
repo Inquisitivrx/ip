@@ -1,12 +1,14 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Luna {
+    private static final String FILE_PATH = "./data/luna.txt";
+
     public static void main(String[] args) {
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = loadTasks();
         Scanner scanner = new Scanner(System.in);
 
-        // Greeting message
         System.out.println("____________________________________________________________");
         System.out.println(" Hello! I'm Luna");
         System.out.println(" What can I do for you?");
@@ -31,6 +33,7 @@ public class Luna {
                 } else if (userInput.startsWith("mark ")) {
                     int taskIndex = getTaskIndex(userInput, tasks.size());
                     tasks.get(taskIndex).markAsDone();
+                    saveTasks(tasks);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Nice! I've marked this task as done:");
                     System.out.println("   " + tasks.get(taskIndex));
@@ -38,6 +41,7 @@ public class Luna {
                 } else if (userInput.startsWith("unmark ")) {
                     int taskIndex = getTaskIndex(userInput, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
+                    saveTasks(tasks);
                     System.out.println("____________________________________________________________");
                     System.out.println(" OK, I've marked this task as not done yet:");
                     System.out.println("   " + tasks.get(taskIndex));
@@ -48,6 +52,7 @@ public class Luna {
                         throw new LunaException("The description of a todo cannot be empty.");
                     }
                     tasks.add(new Todo(description));
+                    saveTasks(tasks);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + tasks.get(tasks.size() - 1));
@@ -59,6 +64,7 @@ public class Luna {
                         throw new LunaException("Invalid deadline format. Use: deadline <description> /by <time>");
                     }
                     tasks.add(new Deadline(parts[0].trim(), parts[1].trim()));
+                    saveTasks(tasks);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + tasks.get(tasks.size() - 1));
@@ -70,6 +76,7 @@ public class Luna {
                         throw new LunaException("Invalid event format. Use: event <description> /from <start> /to <end>");
                     }
                     tasks.add(new Event(parts[0].trim(), parts[1].trim(), parts[2].trim()));
+                    saveTasks(tasks);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + tasks.get(tasks.size() - 1));
@@ -78,6 +85,7 @@ public class Luna {
                 } else if (userInput.startsWith("delete ")) {
                     int taskIndex = getTaskIndex(userInput, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    saveTasks(tasks);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Noted. I've removed this task:");
                     System.out.println("   " + removedTask);
@@ -90,13 +98,8 @@ public class Luna {
                 System.out.println("____________________________________________________________");
                 System.out.println(" OOPS!!! " + e.getMessage());
                 System.out.println("____________________________________________________________");
-            } catch (Exception e) {
-                System.out.println("____________________________________________________________");
-                System.out.println(" OOPS!!! Something went wrong. Please check your input.");
-                System.out.println("____________________________________________________________");
             }
         }
-
         scanner.close();
     }
 
@@ -110,5 +113,41 @@ public class Luna {
         } catch (NumberFormatException e) {
             throw new LunaException("Invalid task index. Please provide a valid number.");
         }
+    }
+
+    private static void saveTasks(ArrayList<Task> tasks) {
+        try {
+            File file = new File(FILE_PATH);
+            file.getParentFile().mkdirs(); // Ensure directory exists
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            for (Task task : tasks) {
+                writer.write(task.toFileString());
+                writer.newLine();
+            }
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Error saving tasks: " + e.getMessage());
+        }
+    }
+
+    private static ArrayList<Task> loadTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            return tasks; // Return empty list if file does not exist
+        }
+        try {
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                Task task = Task.fromFileString(scanner.nextLine());
+                if (task != null) {
+                    tasks.add(task);
+                }
+            }
+            scanner.close();
+        } catch (IOException e) {
+            System.out.println("Error loading tasks: " + e.getMessage());
+        }
+        return tasks;
     }
 }
