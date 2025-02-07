@@ -1,17 +1,23 @@
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-class Storage {
+public class Storage {
     private final String filePath;
 
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
-    public List<Task> loadTasks() {
+    public List<Task> loadTasks() throws LunaException {
         List<Task> tasks = new ArrayList<>();
         File file = new File(filePath);
+
         if (!file.exists()) {
             return tasks;
         }
@@ -19,14 +25,10 @@ class Storage {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                try {
-                    tasks.add(Task.fromFileString(line));
-                } catch (IOException e) {
-                    System.out.println("Skipping corrupted data: " + line);
-                }
+                tasks.add(Task.fromFileString(line));
             }
         } catch (IOException e) {
-            System.out.println("Error loading tasks: " + e.getMessage());
+            throw new LunaException("Error reading task file.");
         }
         return tasks;
     }

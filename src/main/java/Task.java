@@ -17,10 +17,6 @@ abstract class Task {
         this.isDone = false;
     }
 
-    public boolean isDone() {
-        return isDone;
-    }
-
     public abstract String toFileString();
 
     public static Task fromFileString(String fileLine) throws IOException {
@@ -56,7 +52,6 @@ abstract class Task {
             throw new IOException("Invalid date format in stored data: " + e.getMessage());
         }
     }
-
 
     @Override
     public String toString() {
