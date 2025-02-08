@@ -1,3 +1,8 @@
+package luna.task;
+
+import luna.exception.LunaException;
+import luna.Ui;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,14 +23,14 @@ public class TaskList {
 
     public Task removeTask(int index) throws LunaException {
         if (index < 0 || index >= tasks.size()) {
-            throw new LunaException("Task index out of range.");
+            throw new LunaException("luna.task.Task index out of range.");
         }
         return tasks.remove(index);
     }
 
     public Task getTask(int index) throws LunaException {
         if (index < 0 || index >= tasks.size()) {
-            throw new LunaException("Task index out of range.");
+            throw new LunaException("luna.task.Task index out of range.");
         }
         return tasks.get(index);
     }

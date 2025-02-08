@@ -1,3 +1,5 @@
+package luna;
+
 import java.util.Scanner;
 
 public class Ui {
@@ -9,7 +11,7 @@ public class Ui {
 
     public void showWelcome() {
         System.out.println("____________________________________________________________");
-        System.out.println(" Hello! I'm Luna");
+        System.out.println(" Hello! I'm luna.Luna");
         System.out.println(" What can I do for you?");
         System.out.println("____________________________________________________________");
     }

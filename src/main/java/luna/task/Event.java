@@ -1,4 +1,6 @@
-class Event extends Task {
+package luna.task;
+
+public class Event extends Task {
     protected String from;
     protected String to;
 

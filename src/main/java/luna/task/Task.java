@@ -1,6 +1,8 @@
+package luna.task;
+
 import java.io.IOException;
 
-abstract class Task {
+public abstract class Task {
     protected String description;
     protected boolean isDone;
 
