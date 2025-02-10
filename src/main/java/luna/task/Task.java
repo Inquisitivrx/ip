@@ -19,6 +19,10 @@ public abstract class Task {
         this.isDone = false;
     }
 
+    public boolean isDone() {
+        return isDone;
+    }
+
     public abstract String toFileString();
 
     public static Task fromFileString(String fileLine) throws IOException {
