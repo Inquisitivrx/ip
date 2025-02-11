@@ -61,6 +61,10 @@ public class Parser {
                 handleDeleteCommand(userInput, tasks, ui);
                 break;
 
+            case "find":
+                handleFindCommand(userInput, tasks, ui);
+                break;
+
             default:
                 throw new LunaException("I'm sorry, but I don't recognize that command.");
         }
@@ -138,5 +142,14 @@ public class Parser {
         Task removedTask = tasks.removeTask(index);
         ui.showMessage("Noted. I've removed this task:\n  " + removedTask);
         ui.showBorder();
+    }
+
+    private void handleFindCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+        if (userInput.trim().equals("find")) {
+            throw new LunaException("Please specify a keyword to search for.");
+        }
+
+        String keyword = userInput.substring(5).trim();
+        tasks.findTasks(keyword, ui);
     }
 }
