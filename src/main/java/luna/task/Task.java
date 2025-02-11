@@ -99,4 +99,8 @@ public abstract class Task {
     public String toString() {
         return (isDone ? "[X] " : "[ ] ") + description;
     }
+
+    public String getDescription() {
+        return description;
+    }
 }
