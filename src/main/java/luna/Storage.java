@@ -12,13 +12,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles loading and saving tasks to a file.
+ */
 public class Storage {
     private final String filePath;
 
+    /**
+     * Creates a Storage instance to manage file operations.
+     *
+     * @param filePath The file path to store task data.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Loads tasks from the file.
+     *
+     * @return A list of tasks loaded from the file.
+     * @throws LunaException If there is an issue reading the file.
+     */
     public List<Task> loadTasks() throws LunaException {
         List<Task> tasks = new ArrayList<>();
         File file = new File(filePath);
@@ -38,6 +52,11 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves the current list of tasks to the file.
+     *
+     * @param tasks The list of tasks to be saved.
+     */
     public void saveTasks(List<Task> tasks) {
         File file = new File(filePath);
         file.getParentFile().mkdirs();

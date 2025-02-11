@@ -7,8 +7,22 @@ import luna.task.TaskList;
 import luna.task.Todo;
 import luna.exception.LunaException;
 
+/**
+ * The Parser class handles the interpretation and execution of user commands.
+ * It processes user input and updates the task list accordingly.
+ */
 public class Parser {
 
+    /**
+     * Processes user input and executes the corresponding command.
+     *
+     * @param userInput The command entered by the user.
+     * @param tasks The list of tasks.
+     * @param ui The UI instance to display messages.
+     * @param storage The storage handler for saving and loading tasks.
+     * @return {@code false} if the command is "bye" (to exit the program), otherwise {@code true}.
+     * @throws LunaException If the input is invalid or an unknown command is entered.
+     */
     public boolean processCommand(String userInput, TaskList tasks, Ui ui, Storage storage) throws LunaException {
         String[] inputParts = userInput.split(" ", 2);
         String command = inputParts[0].toLowerCase();
@@ -24,14 +38,14 @@ public class Parser {
                 break;
 
             case "mark":
-                int markIndex = getTaskIndex(userInput, tasks);
+                int markIndex = getTaskIndex(userInput);
                 tasks.markTaskDone(markIndex);
                 ui.showMessage("Nice! I've marked this task as done:\n  " + tasks.getTask(markIndex));
                 ui.showBorder();
                 break;
 
             case "unmark":
-                int unmarkIndex = getTaskIndex(userInput, tasks);
+                int unmarkIndex = getTaskIndex(userInput);
                 tasks.markTaskNotDone(unmarkIndex);
                 ui.showMessage("OK, I've marked this task as not done yet:\n  " + tasks.getTask(unmarkIndex));
                 ui.showBorder();
@@ -66,7 +80,7 @@ public class Parser {
                 if (userInput.isEmpty()) {
                     throw new LunaException("Please specify a task number to delete.");
                 }
-                int deleteIndex = getTaskIndex(userInput, tasks);
+                int deleteIndex = getTaskIndex(userInput);
                 Task removedTask = tasks.removeTask(deleteIndex);
                 ui.showMessage("Noted. I've removed this task:\n  " + removedTask);
                 ui.showBorder();
@@ -80,10 +94,16 @@ public class Parser {
         return true;
     }
 
-    private int getTaskIndex(String userInput, TaskList tasks) throws LunaException {
+    /**
+     * Extracts the task index from a user command.
+     *
+     * @param userInput The full user input string.
+     * @return The zero-based index of the task in the list.
+     * @throws LunaException If the index is missing or not a valid number.
+     */
+    private int getTaskIndex(String userInput) throws LunaException {
         try {
-            int index = Integer.parseInt(userInput.split(" ")[1]) - 1;
-            return index;
+            return Integer.parseInt(userInput.split(" ")[1]) - 1;
         } catch (NumberFormatException e) {
             throw new LunaException("Invalid task index.");
         }

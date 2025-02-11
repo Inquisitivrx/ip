@@ -2,29 +2,60 @@ package luna.task;
 
 import java.io.IOException;
 
+/**
+ * Represents a task with a description and completion status.
+ */
 public abstract class Task {
     protected String description;
     protected boolean isDone;
 
+    /**
+     * Creates a task with the given description.
+     *
+     * @param description The task description.
+     */
     public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
+    /**
+     * Marks the task as done.
+     */
     public void markAsDone() {
         this.isDone = true;
     }
 
+    /**
+     * Marks the task as not done.
+     */
     public void markAsNotDone() {
         this.isDone = false;
     }
 
+    /**
+     * Checks if the task is completed.
+     *
+     * @return {@code true} if the task is done, otherwise {@code false}.
+     */
     public boolean isDone() {
         return isDone;
     }
 
+    /**
+     * Converts the task to a file-compatible string format.
+     *
+     * @return A formatted string representing the task.
+     */
     public abstract String toFileString();
 
+    /**
+     * Parses a task from a file string representation.
+     *
+     * @param fileLine The string representation of a task from a file.
+     * @return A Task object.
+     * @throws IOException If the file data is corrupted or invalid.
+     */
     public static Task fromFileString(String fileLine) throws IOException {
         String[] parts = fileLine.split(" \\| ");
         if (parts.length < 3) {
@@ -59,6 +90,11 @@ public abstract class Task {
         }
     }
 
+    /**
+     * Returns a string representation of the task.
+     *
+     * @return The task string.
+     */
     @Override
     public String toString() {
         return (isDone ? "[X] " : "[ ] ") + description;
