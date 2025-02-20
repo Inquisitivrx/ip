@@ -18,59 +18,42 @@ public class Parser {
      *
      * @param userInput The command entered by the user.
      * @param tasks The list of tasks.
-     * @param ui The UI instance to display messages.
      * @param storage The storage handler for saving and loading tasks.
      * @return {@code false} if the command is "bye" (to exit the program), otherwise {@code true}.
      * @throws LunaException If the input is invalid or an unknown command is entered.
      */
-    public boolean processCommand(String userInput, TaskList tasks, Ui ui, Storage storage) throws LunaException {
+    public String processCommand(String userInput, TaskList tasks, Storage storage) throws LunaException {
         String[] inputParts = userInput.split(" ", 2);
         String command = inputParts[0].toLowerCase();
 
         switch (command) {
-            case "bye":
-                ui.showMessage("Bye. Hope to see you again soon!");
-                ui.showBorder();
-                return false;
-
             case "list":
-                tasks.listTasks(ui);
-                break;
+                return tasks.listTasks();
 
             case "mark":
-                handleMarkCommand(userInput, tasks, ui);
-                break;
+                return handleMarkCommand(userInput, tasks);
 
             case "unmark":
-                handleUnmarkCommand(userInput, tasks, ui);
-                break;
+                return handleUnmarkCommand(userInput, tasks);
 
             case "todo":
-                handleTodoCommand(userInput, tasks, ui);
-                break;
+                return handleTodoCommand(userInput, tasks);
 
             case "deadline":
-                handleDeadlineCommand(userInput, tasks, ui);
-                break;
+                return handleDeadlineCommand(userInput, tasks);
 
             case "event":
-                handleEventCommand(userInput, tasks, ui);
-                break;
+                return handleEventCommand(userInput, tasks);
 
             case "delete":
-                handleDeleteCommand(userInput, tasks, ui);
-                break;
+                return handleDeleteCommand(userInput, tasks);
 
             case "find":
-                handleFindCommand(userInput, tasks, ui);
-                break;
+                return handleFindCommand(userInput, tasks);
 
             default:
                 throw new LunaException("I'm sorry, but I don't recognize that command.");
         }
-
-        storage.saveTasks(tasks.getTasks());
-        return true;
     }
 
     /**
@@ -88,32 +71,29 @@ public class Parser {
         }
     }
 
-    private void handleMarkCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+    private String handleMarkCommand(String userInput, TaskList tasks) throws LunaException {
         int index = getTaskIndex(userInput);
         tasks.markTaskDone(index);
-        ui.showMessage("Nice! I've marked this task as done:\n  " + tasks.getTask(index));
-        ui.showBorder();
+        return "Nice! I've marked this task as done:\n  " + tasks.getTask(index);
     }
 
-    private void handleUnmarkCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+    private String handleUnmarkCommand(String userInput, TaskList tasks) throws LunaException {
         int index = getTaskIndex(userInput);
         tasks.markTaskNotDone(index);
-        ui.showMessage("OK, I've marked this task as not done yet:\n  " + tasks.getTask(index));
-        ui.showBorder();
+        return "OK, I've marked this task as not done yet:\n  " + tasks.getTask(index);
     }
 
-    private void handleTodoCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+    private String handleTodoCommand(String userInput, TaskList tasks) throws LunaException {
         if (userInput.trim().equals("todo")) {
             throw new LunaException("The description of a todo cannot be empty.");
         }
 
         Task todoTask = new Todo(userInput.substring(5).trim());
         tasks.addTask(todoTask);
-        ui.showMessage("Got it. I've added this task:\n  " + todoTask);
-        ui.showBorder();
+        return "Got it. I've added this task:\n  " + todoTask;
     }
 
-    private void handleDeadlineCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+    private String handleDeadlineCommand(String userInput, TaskList tasks) throws LunaException {
         String[] parts = userInput.split(" /by ", 2);
         if (parts.length < 2) {
             throw new LunaException("Invalid deadline format. Use: deadline <description> /by <date/time>");
@@ -121,11 +101,10 @@ public class Parser {
 
         Task deadlineTask = new Deadline(parts[0].substring(9).trim(), parts[1].trim());
         tasks.addTask(deadlineTask);
-        ui.showMessage("Got it. I've added this task:\n  " + deadlineTask);
-        ui.showBorder();
+        return "Got it. I've added this task:\n  " + deadlineTask;
     }
 
-    private void handleEventCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+    private String handleEventCommand(String userInput, TaskList tasks) throws LunaException {
         String[] parts = userInput.split(" /from | /to ", 3);
         if (parts.length < 3) {
             throw new LunaException("Invalid event format. Use: event <description> /from <start> /to <end>");
@@ -133,23 +112,21 @@ public class Parser {
 
         Task eventTask = new Event(parts[0].substring(6).trim(), parts[1].trim(), parts[2].trim());
         tasks.addTask(eventTask);
-        ui.showMessage("Got it. I've added this task:\n  " + eventTask);
-        ui.showBorder();
+        return "Got it. I've added this task:\n  " + eventTask;
     }
 
-    private void handleDeleteCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+    private String handleDeleteCommand(String userInput, TaskList tasks) throws LunaException {
         int index = getTaskIndex(userInput);
         Task removedTask = tasks.removeTask(index);
-        ui.showMessage("Noted. I've removed this task:\n  " + removedTask);
-        ui.showBorder();
+        return "Noted. I've removed this task:\n  " + removedTask;
     }
 
-    private void handleFindCommand(String userInput, TaskList tasks, Ui ui) throws LunaException {
+    private String handleFindCommand(String userInput, TaskList tasks) throws LunaException {
         if (userInput.trim().equals("find")) {
             throw new LunaException("Please specify a keyword to search for.");
         }
 
         String keyword = userInput.substring(5).trim();
-        tasks.findTasks(keyword, ui);
+        return tasks.findTasks(keyword);
     }
 }

@@ -11,7 +11,6 @@ public class Luna {
 
     private final Storage storage;
     private TaskList tasks;
-    private final Ui ui;
     private final Parser parser;
 
     /**
@@ -21,13 +20,11 @@ public class Luna {
      * @param filePath The file path to store and retrieve tasks.
      */
     public Luna(String filePath) {
-        ui = new Ui();
         storage = new Storage(filePath);
         parser = new Parser();
         try {
             tasks = new TaskList(storage.loadTasks());
         } catch (LunaException e) {
-            ui.showLoadingError();
             tasks = new TaskList();
         }
     }
@@ -36,25 +33,13 @@ public class Luna {
      * Runs the main loop of the Luna chatbot.
      * Continuously reads user input, processes commands, and handles errors.
      */
-    public void run() {
-        ui.showWelcome();
-        boolean isRunning = true;
-
-        while (isRunning) {
-            String userInput = ui.getUserInput();
-            try {
-                isRunning = parser.processCommand(userInput, tasks, ui, storage);
-            } catch (LunaException e) {
-                ui.showError(e.getMessage());
-            }
+    public String getResponse(String input) {
+        try {
+            String response = parser.processCommand(input, tasks, storage);
+            storage.saveTasks(tasks.getTasks());
+            return "Processed: " + input + "\n" + response;
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
         }
-    }
-
-    /**
-     * The entry point of the Luna chatbot application.
-     * Creates an instance of Luna and starts the chatbot.
-     */
-    public static void main(String[] args) {
-        new Luna("data/tasks.txt").run();
     }
 }

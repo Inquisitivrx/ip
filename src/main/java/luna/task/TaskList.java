@@ -1,7 +1,6 @@
 package luna.task;
 
 import luna.exception.LunaException;
-import luna.Ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,14 +87,14 @@ public class TaskList {
     /**
      * Lists all tasks in the task list.
      *
-     * @param ui The UI instance used to display the tasks.
      */
-    public void listTasks(Ui ui) {
-        ui.showMessage("Here are the tasks in your list:");
+    public String listTasks() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Here are the tasks in your list:\n");
         for (int i = 0; i < tasks.size(); i++) {
-            ui.showTask((i + 1) + ". " + tasks.get(i));
+            sb.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
-        ui.showBorder();
+        return sb.toString();
     }
 
     /**
@@ -107,7 +106,7 @@ public class TaskList {
         return tasks;
     }
 
-    public void findTasks(String keyword, Ui ui) {
+    public String findTasks(String keyword) {
         List<Task> matchingTasks = new ArrayList<>();
 
         for (Task task : tasks) {
@@ -117,14 +116,15 @@ public class TaskList {
         }
 
         if (matchingTasks.isEmpty()) {
-            ui.showMessage("No matching tasks found.");
+            return "No matching tasks found.";
         } else {
-            ui.showMessage("Here are the matching tasks in your list:");
+            StringBuilder sb = new StringBuilder();
+            sb.append("Here are the matching tasks in your list:\n");
             for (int i = 0; i < matchingTasks.size(); i++) {
-                ui.showTask((i + 1) + ". " + matchingTasks.get(i));
+                sb.append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
             }
+            return sb.toString();
         }
-        ui.showBorder();
     }
 
 }
