@@ -18,11 +18,10 @@ public class Parser {
      *
      * @param userInput The command entered by the user.
      * @param tasks The list of tasks.
-     * @param storage The storage handler for saving and loading tasks.
      * @return {@code false} if the command is "bye" (to exit the program), otherwise {@code true}.
      * @throws LunaException If the input is invalid or an unknown command is entered.
      */
-    public String processCommand(String userInput, TaskList tasks, Storage storage) throws LunaException {
+    public String processCommand(String userInput, TaskList tasks) throws LunaException {
         String[] inputParts = userInput.split(" ", 2);
         String command = inputParts[0].toLowerCase();
 
