@@ -21,7 +21,7 @@ public class Parser {
      * @throws LunaException If the input is invalid or an unknown command is entered.
      */
     public String processCommand(String userInput, TaskList tasks) throws LunaException {
-        String[] inputParts = userInput.trim().split(" ", 2);
+        String[] inputParts = userInput.split(" ", 2);
         String command = inputParts[0].toLowerCase();
 
         switch (command) {

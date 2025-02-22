@@ -21,6 +21,7 @@ public class Storage {
      */
     public Storage(String filePath) {
         this.filePath = filePath;
+        assert !filePath.isEmpty();
     }
 
     /**
@@ -32,10 +33,8 @@ public class Storage {
     public List<Task> loadTasks() throws LunaException {
         List<Task> tasks = new ArrayList<>();
         File file = getFile();
-
-        if (!file.exists()) {
-            return tasks;
-        }
+        assert file.exists();
+        assert file.canRead();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
