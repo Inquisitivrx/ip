@@ -3,12 +3,8 @@ package luna;
 import luna.task.Task;
 import luna.exception.LunaException;
 
-import java.io.BufferedWriter;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +31,7 @@ public class Storage {
      */
     public List<Task> loadTasks() throws LunaException {
         List<Task> tasks = new ArrayList<>();
-        File file = new File(filePath);
+        File file = getFile();
 
         if (!file.exists()) {
             return tasks;
@@ -47,7 +43,7 @@ public class Storage {
                 tasks.add(Task.fromFileString(line));
             }
         } catch (IOException e) {
-            throw new LunaException("Error reading task file.");
+            throw new LunaException("Error reading task file: " + e.getMessage());
         }
         return tasks;
     }
@@ -56,10 +52,11 @@ public class Storage {
      * Saves the current list of tasks to the file.
      *
      * @param tasks The list of tasks to be saved.
+     * @throws LunaException If there is an issue writing to the file.
      */
-    public void saveTasks(List<Task> tasks) {
-        File file = new File(filePath);
-        file.getParentFile().mkdirs();
+    public void saveTasks(List<Task> tasks) throws LunaException {
+        File file = getFile();
+        ensureParentDirectoryExists(file);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (Task task : tasks) {
@@ -67,7 +64,33 @@ public class Storage {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("Error saving tasks: " + e.getMessage());
+            throw new LunaException("Error saving tasks: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets the file object for the specified file path.
+     *
+     * @return The File object.
+     */
+    private File getFile() {
+        return new File(filePath);
+    }
+
+    /**
+     * Ensures that the parent directory of the file exists.
+     *
+     * @param file The file whose parent directory should be checked.
+     * @throws LunaException If directory creation fails.
+     */
+    private void ensureParentDirectoryExists(File file) throws LunaException {
+        File parentDirectory = file.getParentFile();
+        if (parentDirectory != null && !parentDirectory.exists()) {
+            try {
+                Files.createDirectories(parentDirectory.toPath());
+            } catch (IOException e) {
+                throw new LunaException("Failed to create directory: " + e.getMessage());
+            }
         }
     }
 }

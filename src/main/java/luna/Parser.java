@@ -8,8 +8,7 @@ import luna.task.Todo;
 import luna.exception.LunaException;
 
 /**
- * The {@code Parser} class handles the interpretation and execution of user commands.
- * It processes user input and updates the task list accordingly.
+ * The {@code Parser} class is responsible for parsing and processing user commands.
  */
 public class Parser {
 
@@ -18,12 +17,11 @@ public class Parser {
      *
      * @param userInput The command entered by the user.
      * @param tasks The list of tasks.
-     * @param storage The storage handler for saving and loading tasks.
-     * @return {@code false} if the command is "bye" (to exit the program), otherwise {@code true}.
+     * @return A response message based on the command execution.
      * @throws LunaException If the input is invalid or an unknown command is entered.
      */
-    public String processCommand(String userInput, TaskList tasks, Storage storage) throws LunaException {
-        String[] inputParts = userInput.split(" ", 2);
+    public String processCommand(String userInput, TaskList tasks) throws LunaException {
+        String[] inputParts = userInput.trim().split(" ", 2);
         String command = inputParts[0].toLowerCase();
 
         switch (command) {
@@ -31,102 +29,122 @@ public class Parser {
                 return tasks.listTasks();
 
             case "mark":
-                return handleMarkCommand(userInput, tasks);
+                return handleMarkCommand(inputParts, tasks);
 
             case "unmark":
-                return handleUnmarkCommand(userInput, tasks);
+                return handleUnmarkCommand(inputParts, tasks);
 
             case "todo":
-                return handleTodoCommand(userInput, tasks);
+                return handleTodoCommand(inputParts, tasks);
 
             case "deadline":
-                return handleDeadlineCommand(userInput, tasks);
+                return handleDeadlineCommand(inputParts, tasks);
 
             case "event":
-                return handleEventCommand(userInput, tasks);
+                return handleEventCommand(inputParts, tasks);
 
             case "delete":
-                return handleDeleteCommand(userInput, tasks);
+                return handleDeleteCommand(inputParts, tasks);
 
             case "find":
-                return handleFindCommand(userInput, tasks);
+                return handleFindCommand(inputParts, tasks);
 
             default:
-                throw new LunaException("I'm sorry, but I don't recognize that command.");
+                throw new LunaException("I'm sorry, but I don't recognize that command. Try 'list', 'todo', 'event', etc.");
         }
     }
 
     /**
-     * Extracts the task index from a user command.
+     * Extracts the task index from the command arguments.
      *
-     * @param userInput The full user input string.
+     * @param inputParts The split input array containing the command and argument.
      * @return The zero-based index of the task in the list.
-     * @throws LunaException If the index is missing or not a valid number.
+     * @throws LunaException If the index is missing or invalid.
      */
-    private int getTaskIndex(String userInput) throws LunaException {
+    private int getTaskIndex(String[] inputParts) throws LunaException {
+        if (inputParts.length < 2) {
+            throw new LunaException("Missing task index. Please provide a valid number.");
+        }
+
         try {
-            return Integer.parseInt(userInput.split(" ")[1]) - 1;
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            int index = Integer.parseInt(inputParts[1]) - 1;
+            if (index < 0) {
+                throw new LunaException("Task index must be a positive number.");
+            }
+            return index;
+        } catch (NumberFormatException e) {
             throw new LunaException("Invalid task index. Please enter a valid number.");
         }
     }
 
-    private String handleMarkCommand(String userInput, TaskList tasks) throws LunaException {
-        int index = getTaskIndex(userInput);
+    private String handleMarkCommand(String[] inputParts, TaskList tasks) throws LunaException {
+        int index = getTaskIndex(inputParts);
         tasks.markTaskDone(index);
         return "Nice! I've marked this task as done:\n  " + tasks.getTask(index);
     }
 
-    private String handleUnmarkCommand(String userInput, TaskList tasks) throws LunaException {
-        int index = getTaskIndex(userInput);
+    private String handleUnmarkCommand(String[] inputParts, TaskList tasks) throws LunaException {
+        int index = getTaskIndex(inputParts);
         tasks.markTaskNotDone(index);
         return "OK, I've marked this task as not done yet:\n  " + tasks.getTask(index);
     }
 
-    private String handleTodoCommand(String userInput, TaskList tasks) throws LunaException {
-        if (userInput.trim().equals("todo")) {
-            throw new LunaException("The description of a todo cannot be empty.");
+    private String handleTodoCommand(String[] inputParts, TaskList tasks) throws LunaException {
+        if (inputParts.length < 2 || inputParts[1].trim().isEmpty()) {
+            throw new LunaException("The description of a todo cannot be empty. Usage: todo <description>");
         }
 
-        Task todoTask = new Todo(userInput.substring(5).trim());
+        Task todoTask = new Todo(inputParts[1].trim());
         tasks.addTask(todoTask);
         return "Got it. I've added this task:\n  " + todoTask;
     }
 
-    private String handleDeadlineCommand(String userInput, TaskList tasks) throws LunaException {
-        String[] parts = userInput.split(" /by ", 2);
-        if (parts.length < 2) {
-            throw new LunaException("Invalid deadline format. Use: deadline <description> /by <date/time>");
+    private String handleDeadlineCommand(String[] inputParts, TaskList tasks) throws LunaException {
+        if (inputParts.length < 2) {
+            throw new LunaException("Invalid deadline format. Usage: deadline <description> /by <date/time>");
         }
 
-        Task deadlineTask = new Deadline(parts[0].substring(9).trim(), parts[1].trim());
+        String[] parts = inputParts[1].split(" /by ", 2);
+        if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+            throw new LunaException("Invalid deadline format. Usage: deadline <description> /by <date/time>");
+        }
+
+        Task deadlineTask = new Deadline(parts[0].trim(), parts[1].trim());
         tasks.addTask(deadlineTask);
         return "Got it. I've added this task:\n  " + deadlineTask;
     }
 
-    private String handleEventCommand(String userInput, TaskList tasks) throws LunaException {
-        String[] parts = userInput.split(" /from | /to ", 3);
-        if (parts.length < 3) {
-            throw new LunaException("Invalid event format. Use: event <description> /from <start> /to <end>");
+    private String handleEventCommand(String[] inputParts, TaskList tasks) throws LunaException {
+        if (inputParts.length < 2) {
+            throw new LunaException("Invalid event format. Usage: event <description> /from <start> /to <end>");
         }
 
-        Task eventTask = new Event(parts[0].substring(6).trim(), parts[1].trim(), parts[2].trim());
+        String[] parts = inputParts[1].split(" /from ", 2);
+        if (parts.length < 2) {
+            throw new LunaException("Invalid event format. Missing '/from'. Usage: event <description> /from <start> /to <end>");
+        }
+
+        String[] timeParts = parts[1].split(" /to ", 2);
+        if (timeParts.length < 2) {
+            throw new LunaException("Invalid event format. Missing '/to'. Usage: event <description> /from <start> /to <end>");
+        }
+
+        Task eventTask = new Event(parts[0].trim(), timeParts[0].trim(), timeParts[1].trim());
         tasks.addTask(eventTask);
         return "Got it. I've added this task:\n  " + eventTask;
     }
 
-    private String handleDeleteCommand(String userInput, TaskList tasks) throws LunaException {
-        int index = getTaskIndex(userInput);
+    private String handleDeleteCommand(String[] inputParts, TaskList tasks) throws LunaException {
+        int index = getTaskIndex(inputParts);
         Task removedTask = tasks.removeTask(index);
         return "Noted. I've removed this task:\n  " + removedTask;
     }
 
-    private String handleFindCommand(String userInput, TaskList tasks) throws LunaException {
-        if (userInput.trim().equals("find")) {
-            throw new LunaException("Please specify a keyword to search for.");
+    private String handleFindCommand(String[] inputParts, TaskList tasks) throws LunaException {
+        if (inputParts.length < 2 || inputParts[1].trim().isEmpty()) {
+            throw new LunaException("Please specify a keyword to search for. Usage: find <keyword>");
         }
 
-        String keyword = userInput.substring(5).trim();
-        return tasks.findTasks(keyword);
+        return tasks.findTasks(inputParts[1].trim());
     }
 }
