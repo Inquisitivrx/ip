@@ -35,7 +35,8 @@ public class Luna {
      */
     public String getResponse(String input) {
         try {
-            String response = parser.processCommand(input, tasks, storage);
+            assert !input.isEmpty();
+            String response = parser.processCommand(input, tasks);
             storage.saveTasks(tasks.getTasks());
             return "Processed: " + input + "\n" + response;
         } catch (Exception e) {
